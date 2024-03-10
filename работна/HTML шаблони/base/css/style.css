@@ -1061,7 +1061,7 @@ form input {
     width: 100%;
     font-size: 14px;
     margin-bottom: 20px;
-    text-transform: capitalize;
+    /* text-transform: capitalize; */
     line-height: normal;
 }
 
@@ -1118,6 +1118,60 @@ form input[type="submit"]:focus {
     color: #59ab6e;
     font-size: 15px;
     font-weight: 400;
+}
+
+
+.mt-10,
+.my-10 {
+  margin-top: 6rem !important;
+}
+
+.form_button {
+    display: inline-block;
+    padding: 10px 45px;
+    background-color: #59ab6e;
+    border: 1px solid #59ab6e;
+    color: #ffffff;
+    border-radius: 35px;
+    transition: all 0.3s;
+    text-transform: uppercase;
+    font-weight: 600;
+    width: 100%;
+    max-width: 285px;
+}
+
+.form_input {
+    width: 100%;
+    height: 60px;
+    border: solid #ccc 1px;
+    border-radius: 90px;
+    padding: 5px 25px;
+    background-color: #ffffff;
+    text-align: left;
+}
+
+.form_input2 {
+    width: 100%;
+    height: 60px;
+    border: solid #ccc 1px;
+    border-radius: 10px;
+    padding: 5px 25px;
+    background-color: #ffffff;
+    text-align: left;
+}
+
+.form_button2 {
+    display: inline-block;
+    padding: 10px 45px;
+    background-color: #fff;
+    border: 1px solid #59ab6e;
+    color: #000;
+    border-radius: 10px;
+    transition: all 0.3s;
+    text-transform: uppercase;
+    font-weight: 600;
+    width: 100%;
+    max-width: 285px;
 }
 
 http://kute-themes.com/html/boutique/html/index.html
