@@ -45,9 +45,7 @@
                            <span class="nav-label">Категории <span class="caret"> </span></span></a>
                         <ul class="dropdown-menu">
                            <li><a href="#list" @click="setSection('начало')">Всички</a></li>
-                           <li><a href="#list" @click="setSection('начало')">Дамски</a></li>
-                           <li><a href="#list" @click="setSection('начало')">Мъжки</a></li>
-                           <li><a href="#list" @click="setSection('начало')">Детски</a></li>
+                           <li  v-for="(category, idx) in categories"><a href="#list" @click="setSection('начало')">{{category.name}}</a></li>
                         </ul>
                      </li>
                      <li class="nav-item">
@@ -1058,8 +1056,6 @@
       <script src="{% static 'js/popper.min.js' %}"></script>
       <!-- bootstrap js -->
       <script src="{% static 'js/bootstrap.js' %}"></script>
-      <!-- custom js -->
-      <script src="{% static 'js/custom.js' %}"></script>
       <!-- включване на VUE js -->
       <script src="https://unpkg.com/vue@3"></script>
       <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>

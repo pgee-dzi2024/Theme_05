@@ -16,7 +16,7 @@ class AppUser(models.Model):
     objects = AppUserManager()
 
     def __str__(self):
-        return f'{self.username}({self.text})'
+        return f'{self.username}({self.name})'
 
     class Meta:
         verbose_name = 'Потребител'
@@ -63,6 +63,7 @@ class UserPost(models.Model):
     size = models.ForeignKey(Size, on_delete=models.CASCADE, null=True, related_name='size')
     description = models.TextField('Описание', default='', blank=True, help_text='Описание на предлагания продукт')
     remark = models.TextField('Забележки', default='', blank=True, help_text='Текст на съобщение')
+    picture = models.ImageField('Снимка', upload_to='post_pics', blank=True)
 
     objects = UserPostManager()
 

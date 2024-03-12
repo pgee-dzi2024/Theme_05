@@ -2,6 +2,7 @@ const App = {
     data() {
      return {
         status: 0, // условeн номер на текущо визуализираната секция (или група секции)
+        categories: {},
         }
      },
 
@@ -18,9 +19,20 @@ const App = {
             if (SectionName=='проверка')
                 {this.status=4}
         },
+        loadCategories(){
+            vm = this
+            axios.get('/api/categories/')
+            .then(function(response){
+            console.log(response)
+            console.log(response.data)
+                vm.categories = response.data;
+                })
+        },
+
     },
     created: function(){
         this.status = 0
+        this.loadCategories()
     }
 }
 
