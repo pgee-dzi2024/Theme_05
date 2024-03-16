@@ -44,8 +44,10 @@
                         <a class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">
                            <span class="nav-label">Категории <span class="caret"> </span></span></a>
                         <ul class="dropdown-menu">
-                           <li><a href="#list" @click="setSection('начало')">Всички</a></li>
-                           <li  v-for="(category, idx) in categories"><a href="#list" @click="setSection('начало')">{{category.name}}</a></li>
+                           <li><a href="#list" @click="set_filter(0)">Всички</a></li>
+                           <li  v-for="(category, idx) in categories">
+                              <a href="#list" @click="set_filter(category.id)">{{category.name}}</a>
+                           </li>
                         </ul>
                      </li>
                      <li class="nav-item">
@@ -163,335 +165,41 @@
          <div class="container">
             <div class="heading_container heading_center">
                <h2>
-                  Our <span>products</span>
+                  Нашите <span>предложения</span>
                </h2>
             </div>
-            <div class="row">
-
-               <div class="col-sm-6 col-md-4 col-lg-4">
-                  <div class="box">
+            <div class="row" v-if="(posts.length>0)">
+               <div class="col-sm-6 col-md-4 col-lg-4" v-for="(post, idx) in posts">
+                  <div class="box" v-if="(max_posts_mode==0) || (idx<max_posts)">
                      <div class="option_container">
                         <div class="options">
-                           <a href="#details" class="option1" @click="setSection('обява')">
+                           <a href="#details" class="option1" @click="show_post_details(idx)">
                            Виж повече ...
                            </a>
                         </div>
                      </div>
                      <div class="img-box">
-                        {% endverbatim %}
-                        <img src="{% static 'images/p1.png' %}" alt="">
-                        {% verbatim %}
+                        <img :src="post.picture" alt="">
                      </div>
                      <div class="detail-box">
                         <h5>
-                           Мъжка риза
+                           {{post.title}} {{idx}}
                         </h5>
-                     </div>
-                  </div>
-               </div>
-
-               <div class="col-sm-6 col-md-4 col-lg-4">
-                  <div class="box">
-                     <div class="option_container">
-                        <div class="options">
-                           <a href="" class="option1">
-                           Add To Cart
-                           </a>
-                           <a href="" class="option2">
-                           Buy Now
-                           </a>
-                        </div>
-                     </div>
-                     <div class="img-box">
-                        {% endverbatim %}
-                        <img src="{% static 'images/p2.png' %}" alt="">
-                        {% verbatim %}
-                     </div>
-                     <div class="detail-box">
-                        <h5>
-                           Men's Shirt
-                        </h5>
-                        <h6>
-                           $80
-                        </h6>
-                     </div>
-                  </div>
-               </div>
-
-               <div class="col-sm-6 col-md-4 col-lg-4">
-                  <div class="box">
-                     <div class="option_container">
-                        <div class="options">
-                           <a href="" class="option1">
-                           Add To Cart
-                           </a>
-                           <a href="" class="option2">
-                           Buy Now
-                           </a>
-                        </div>
-                     </div>
-                     <div class="img-box">
-                        {% endverbatim %}
-                        <img src="{% static 'images/p3.png' %}" alt="">
-                        {% verbatim %}
-                     </div>
-                     <div class="detail-box">
-                        <h5>
-                           Women's Dress
-                        </h5>
-                        <h6>
-                           $68
-                        </h6>
-                     </div>
-                  </div>
-               </div>
-               <div class="col-sm-6 col-md-4 col-lg-4">
-                  <div class="box">
-                     <div class="option_container">
-                        <div class="options">
-                           <a href="" class="option1">
-                           Add To Cart
-                           </a>
-                           <a href="" class="option2">
-                           Buy Now
-                           </a>
-                        </div>
-                     </div>
-                     <div class="img-box">
-                        {% endverbatim %}
-                        <img src="{% static 'images/p4.png' %}" alt="">
-                        {% verbatim %}
-                     </div>
-                     <div class="detail-box">
-                        <h5>
-                           Women's Dress
-                        </h5>
-                        <h6>
-                           $70
-                        </h6>
-                     </div>
-                  </div>
-               </div>
-               <div class="col-sm-6 col-md-4 col-lg-4">
-                  <div class="box">
-                     <div class="option_container">
-                        <div class="options">
-                           <a href="" class="option1">
-                           Add To Cart
-                           </a>
-                           <a href="" class="option2">
-                           Buy Now
-                           </a>
-                        </div>
-                     </div>
-                     <div class="img-box">
-                        {% endverbatim %}
-                        <img src="{% static 'images/p5.png' %}" alt="">
-                        {% verbatim %}
-                     </div>
-                     <div class="detail-box">
-                        <h5>
-                           Women's Dress
-                        </h5>
-                        <h6>
-                           $75
-                        </h6>
-                     </div>
-                  </div>
-               </div>
-               <div class="col-sm-6 col-md-4 col-lg-4">
-                  <div class="box">
-                     <div class="option_container">
-                        <div class="options">
-                           <a href="" class="option1">
-                           Add To Cart
-                           </a>
-                           <a href="" class="option2">
-                           Buy Now
-                           </a>
-                        </div>
-                     </div>
-                     <div class="img-box">
-                        {% endverbatim %}
-                        <img src="{% static 'images/p6.png' %}" alt="">
-                        {% verbatim %}
-                     </div>
-                     <div class="detail-box">
-                        <h5>
-                           Women's Dress
-                        </h5>
-                        <h6>
-                           $58
-                        </h6>
-                     </div>
-                  </div>
-               </div>
-               <div class="col-sm-6 col-md-4 col-lg-4">
-                  <div class="box">
-                     <div class="option_container">
-                        <div class="options">
-                           <a href="" class="option1">
-                           Add To Cart
-                           </a>
-                           <a href="" class="option2">
-                           Buy Now
-                           </a>
-                        </div>
-                     </div>
-                     <div class="img-box">
-                        {% endverbatim %}
-                        <img src="{% static 'images/p7.png' %}" alt="">
-                        {% verbatim %}
-                     </div>
-                     <div class="detail-box">
-                        <h5>
-                           Women's Dress
-                        </h5>
-                        <h6>
-                           $80
-                        </h6>
-                     </div>
-                  </div>
-               </div>
-               <div class="col-sm-6 col-md-4 col-lg-4">
-                  <div class="box">
-                     <div class="option_container">
-                        <div class="options">
-                           <a href="" class="option1">
-                           Add To Cart
-                           </a>
-                           <a href="" class="option2">
-                           Buy Now
-                           </a>
-                        </div>
-                     </div>
-                     <div class="img-box">
-                        {% endverbatim %}
-                        <img src="{% static 'images/p8.png' %}" alt="">
-                        {% verbatim %}
-                     </div>
-                     <div class="detail-box">
-                        <h5>
-                           Men's Shirt
-                        </h5>
-                        <h6>
-                           $65
-                        </h6>
-                     </div>
-                  </div>
-               </div>
-               <div class="col-sm-6 col-md-4 col-lg-4">
-                  <div class="box">
-                     <div class="option_container">
-                        <div class="options">
-                           <a href="" class="option1">
-                           Add To Cart
-                           </a>
-                           <a href="" class="option2">
-                           Buy Now
-                           </a>
-                        </div>
-                     </div>
-                     <div class="img-box">
-                        {% endverbatim %}
-                        <img src="{% static 'images/p9.png' %}" alt="">
-                        {% verbatim %}
-                     </div>
-                     <div class="detail-box">
-                        <h5>
-                           Men's Shirt
-                        </h5>
-                        <h6>
-                           $65
-                        </h6>
-                     </div>
-                  </div>
-               </div>
-               <div class="col-sm-6 col-md-4 col-lg-4">
-                  <div class="box">
-                     <div class="option_container">
-                        <div class="options">
-                           <a href="" class="option1">
-                           Add To Cart
-                           </a>
-                           <a href="" class="option2">
-                           Buy Now
-                           </a>
-                        </div>
-                     </div>
-                     <div class="img-box">
-                        {% endverbatim %}
-                        <img src="{% static 'images/p10.png' %}" alt="">
-                        {% verbatim %}
-                     </div>
-                     <div class="detail-box">
-                        <h5>
-                           Men's Shirt
-                        </h5>
-                        <h6>
-                           $65
-                        </h6>
-                     </div>
-                  </div>
-               </div>
-               <div class="col-sm-6 col-md-4 col-lg-4">
-                  <div class="box">
-                     <div class="option_container">
-                        <div class="options">
-                           <a href="" class="option1">
-                           Add To Cart
-                           </a>
-                           <a href="" class="option2">
-                           Buy Now
-                           </a>
-                        </div>
-                     </div>
-                     <div class="img-box">
-                        {% endverbatim %}
-                        <img src="{% static 'images/p11.png' %}" alt="">
-                        {% verbatim %}
-                     </div>
-                     <div class="detail-box">
-                        <h5>
-                           Men's Shirt
-                        </h5>
-                        <h6>
-                           $65
-                        </h6>
-                     </div>
-                  </div>
-               </div>
-               <div class="col-sm-6 col-md-4 col-lg-4">
-                  <div class="box">
-                     <div class="option_container">
-                        <div class="options">
-                           <a href="" class="option1">
-                           Add To Cart
-                           </a>
-                           <a href="" class="option2">
-                           Buy Now
-                           </a>
-                        </div>
-                     </div>
-                     <div class="img-box">
-                        {% endverbatim %}
-                        <img src="{% static 'images/p12.png' %}" alt="">
-                        {% verbatim %}
-                     </div>
-                     <div class="detail-box">
-                        <h5>
-                           Women's Dress
-                        </h5>
-                        <h6>
-                           $65
-                        </h6>
                      </div>
                   </div>
                </div>
             </div>
-            <div class="btn-box">
-               <a href="" >
-               View All products
+            <div style="text-align: center;" v-if="(posts.length==0)">
+               Няма намерени предложения от избраната категория
+            </div>
+            <div class="btn-box" v-if="(posts.length>max_posts) && (max_posts_mode==1)">
+               <a @click="set_max_mode()" >
+                  Вижте всички {{posts.length}} обяви {{posts.length}}
+               </a>
+            </div>
+            <div class="btn-box" v-if="(posts.length>max_posts) && (max_posts_mode==0)">
+               <a @click="set_max_mode()" >
+                  Вижте само първите {{max_posts}} обяви
                </a>
             </div>
          </div>
@@ -581,9 +289,7 @@
                <!-- Лява част - снимка-->
                <div class="col-sm-6 col-md-4 col-lg-4">
                      <div class="img-box">
-                        {% endverbatim %}
-                        <img src="{% static 'images/p1.png' %}" alt="">
-                        {% verbatim %}
+                        <img :src="current_post.picture" alt="">
                      </div>
                </div>
 
@@ -598,7 +304,7 @@
                                  <h6>Цена:</h6>
                               </li>
                               <li class="list-inline-item">
-                                 <p class="text-muted"><strong>25.00 лв.</strong></p>
+                                 <p class="text-muted"><strong>{{current_post.price}} лв.</strong></p>
                               </li>
                            </ul>
 
@@ -608,7 +314,7 @@
                                  <h6>Категория:</h6>
                               </li>
                                  <li class="list-inline-item">
-                                    <p class="text-muted"><strong>Мъжки дрехи</strong></p>
+                                    <p class="text-muted"><strong>{{current_post.category.name}}</strong></p>
                                  </li>
                            </ul>
 
@@ -618,7 +324,7 @@
                                  <h6>Размер:</h6>
                               </li>
                                  <li class="list-inline-item">
-                                    <p class="text-muted"><strong>XXL</strong></p>
+                                    <p class="text-muted"><strong>{{current_post.size.value}}</strong></p>
                                  </li>
                            </ul>
 
@@ -628,7 +334,7 @@
                                  <h6>Описание:</h6>
                               </li>
                                  <li class="list-inline-item">
-                                    <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod temp incididunt ut labore et dolore magna aliqua. Quis ipsum suspendisse. Donec condimentum elementum convallis. Nunc sed orci a diam ultrices aliquet interdum quis nulla.</p>
+                                    <p class="text-muted">{{current_post.description}}</p>
                                  </li>
                            </ul>
 
@@ -638,7 +344,7 @@
                                  <h6>Забележки:</h6>
                               </li>
                               <li class="list-inline-item">
-                                 <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod temp incididunt ut labore et dolore magna aliqua. Quis ipsum suspendisse. Donec condimentum elementum convallis. Nunc sed orci a diam ultrices aliquet interdum quis nulla.</p>
+                                 <p class="text-muted">{{current_post.remark}}</p>
                               </li>
                            </ul>
 
@@ -1019,21 +725,27 @@
                      <!-- Бюлетин -->
                      <div class="col-md-7">
                         <div class="widget_menu">
-                        <h3>Новини</h3>
-                        <div class="information_f">
-                          <p>Регистррайте се за нашия on-line бюлетин.</p>
+                           <h3>Новини</h3>
+                           <div class="information_f">
+                             <p>Регистррайте се за нашия on-line бюлетин.</p>
+                           </div>
+                           <div class="form_sub">
+                              <form>
+                                 <fieldset>
+                                    <div class="field">
+                                       <input type="email" placeholder="Въведете e-mail" name="email" />
+                                       <input type="submit" value="Изпрати" />
+                                    </div>
+                                 </fieldset>
+                              </form>
+                           </div>
+                           <div class="widget_menu">
+                              <h3>За администратори:</h3>
+                              <div style="text-align: right">
+                                 <a href="/admin" class="form_button"  style="text-align: center;">-- ВХОД --</a>
+                              </div>
+                           </div>
                         </div>
-                        <div class="form_sub">
-                           <form>
-                              <fieldset>
-                                 <div class="field">
-                                    <input type="email" placeholder="Въведете e-mail" name="email" />
-                                    <input type="submit" value="Изпрати" />
-                                 </div>
-                              </fieldset>
-                           </form>
-                        </div>
-                     </div>
                      </div>
                   </div>
                </div>

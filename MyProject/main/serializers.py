@@ -17,8 +17,16 @@ class SizesSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-# Сериализатор  РАЗМЕРИ
-class SizesSerializer(serializers.ModelSerializer):
+# Сериализатор  КОМЕНТАРИ
+class CommentsSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Size
+        model = Comment
         fields = "__all__"
+
+
+# Сериализатор  ОБЯВИ
+class PostsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserPost
+        fields = "__all__"
+        depth = 1
