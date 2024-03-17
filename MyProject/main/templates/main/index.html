@@ -22,8 +22,9 @@
       <!-- responsive style -->
       <link href="{% static 'css/responsive.css' %}" rel="stylesheet" />
    </head>
-   {% verbatim %}
    <body>
+   <script type="text/javascript"> window.CSRF_TOKEN = "{{ csrf_token }}"; </script>
+   {% verbatim %}
    <div  id="main">
       <!-- главно меню - начало -->
       <header class="header_section">
@@ -51,10 +52,12 @@
                         </ul>
                      </li>
                      <li class="nav-item">
-                        <a class="nav-link" href="#login" @click="setSection('вход')">Вход</a>
+                        <a class="nav-link" @click="setSection('вход')" v-if="user.id==0">Вход</a>
+                        <a class="nav-link" @click="logout()" v-if="user.id>0">Изход</a>
                      </li>
+                     <li class="nav-item"><a class="nav-link" @click="setSection('проверка')" v-if="user.id>0">Моите обяви</a></li>
                      <li class="nav-item">
-                        <a class="nav-link" href="#register" @click="setSection('регистриране')">Регистрация</a>
+                        <a class="nav-link" @click="setSection('регистриране')" v-if="user.id==0">Регистрация</a>
                      </li>
                   </ul>
                </div>
@@ -183,7 +186,7 @@
                      </div>
                      <div class="detail-box">
                         <h5>
-                           {{post.title}} {{idx}}
+                           {{post.title}}
                         </h5>
                      </div>
                   </div>
@@ -194,7 +197,7 @@
             </div>
             <div class="btn-box" v-if="(posts.length>max_posts) && (max_posts_mode==1)">
                <a @click="set_max_mode()" >
-                  Вижте всички {{posts.length}} обяви {{posts.length}}
+                  Вижте всички {{posts.length}} обяви
                </a>
             </div>
             <div class="btn-box" v-if="(posts.length>max_posts) && (max_posts_mode==0)">
@@ -223,10 +226,10 @@
                            <h3>ВХОД</h3>
                         </div>
                         <p>Само регистрирани потребители могат да публикуват обяви</p>
-                        <form action="">
-                           <input id="f1" type="text" placeholder="Въведете потребителско име">
-                           <input type="password" placeholder="Въведете парола">
-                           <button>
+                        <form>
+                           <input id="f1" type="text" placeholder="Въведете потребителско име" v-model="user.name">
+                           <input type="password" placeholder="Въведете парола" v-model="user.password">
+                           <button @click="login()">
                               Влизане
                            </button>
                         </form>
@@ -251,18 +254,18 @@
                      {% verbatim %}
                   </div>
                   <div class="col-md-6">
-                     <div class="subscribe_form mt-10">
+                     <div class="subscribe_form mt-5">
                         <div class="heading_container heading_center">
                            <h3>Регистриране на нов потребител</h3>
                         </div>
                         <p>Само регистрирани потребители могат да публикуват обяви</p>
                         <form action="">
-                           <input type="text" placeholder="Въведете Вашите име и фамилия">
-                           <input type="text" placeholder="Въведете e-mail adres">
-                           <input style="margin-top: 80px;" type="text" placeholder="Въведете потребителско име">
-                           <input type="password" placeholder="Въведете парола">
-                           <input type="password" placeholder="Повторете паролата">
-                           <button class="option1"> Регистрирай </button>
+                           <input type="text" placeholder="Въведете Вашите име и фамилия" v-model="new_user.name">
+                           <input type="text" placeholder="Въведете e-mail адрес" v-model="new_user.email">
+                           <input style="margin-top: 80px;" type="text" placeholder="Въведете потребителско име" v-model="new_user.user">
+                           <input type="password" placeholder="Въведете парола" v-model="new_user.password1">
+                           <input type="password" placeholder="Повторете паролата" v-model="new_user.password2">
+                           <button class="option1" @click="addNewUser()"> Регистрирай </button>
                         </form>
                      </div>
                   </div>
@@ -278,7 +281,7 @@
          <section class="product_section layout_padding">
             <div class="heading_container heading_center">
                <h2>
-                  Мъжка риза
+                  {{current_post.title}}
                </h2>
             </div>
             <div class="row">
@@ -355,22 +358,28 @@
                               </li>
                               <li class="list-inline-item">
                                  <div class="text-muted">
-                                    <form action="">
+                                    <div>
                                        <label for="bf_name">Име:</label>
-                                       <input id="bf_name" class="form_input" type="text" value="" placeholder="Въведете Вашите име и фамилия" >
+                                       <input id="bf_name" class="form_input" type="text" value=""
+                                              placeholder="Въведете Вашите име и фамилия" v-model="new_comment.name">
 
                                        <label for="bf_phone">телефон:</label>
-                                       <input id="bf_phone" class="form_input" type="text" value="" placeholder="Въведете Вашите име и фамилия" >
+                                       <input id="bf_phone" class="form_input" type="text" value=""
+                                              placeholder="Въведете телефон за контакт" v-model="new_comment.phone">
 
                                        <label for="bf_mail">и/или е-mail адрес:</label>
-                                       <input id="bf_mail" class="form_input" type="email" value="" placeholder="Въведете e-mail adres">
+                                       <input id="bf_mail" class="form_input" type="email" value=""
+                                              placeholder="Въведете e-mail adres" v-model="new_comment.mail">
 
                                        <label for="bf_text">текст:</label>
-                                       <textarea id="bf_text" class="form_input" style="border-radius: 30px;" name="message" rows="5" value="" placeholder="Въведете Вашето запитване"></textarea>
+                                       <textarea id="bf_text" class="form_input" style="border-radius: 30px;"
+                                                 name="message" rows="5" value=""
+                                                 placeholder="Въведете Вашето запитване"  v-model="new_comment.message">
+                                       </textarea>
                                        <div style="text-align: center;">
-                                          <button class="form_button"> Изпрати </button>
+                                          <button class="form_button" @click="addComment()"> Изпрати </button>
                                        </div>
-                                    </form>
+                                    </div>
                                  </div>
                               </li>
                            </ul>
@@ -400,16 +409,16 @@
                   <div class="collapse navbar-collapse" id="navbarSupportedContent2">
                      <ul class="navbar-nav">
                         <li class="nav-item">
-                           <a class="nav-link" href="index.html">Предишна обява<span class="sr-only">(current)</span></a>
+                           <a class="nav-link" @click="changeActivePost(-1)">Предишна обява<span class="sr-only">(current)</span></a>
                         </li>
                         <li class="nav-item">
-                           <a class="nav-link" href="index.html">Следваща обява</a>
+                           <a class="nav-link" @click="changeActivePost(1)">Следваща обява</a>
                         </li>
                         <li class="nav-item">
                            <a class="nav-link" href="index.html">Нова обява</a>
                         </li>
                         <li class="nav-item">
-                           <a class="nav-link" href="index.html">Премахване на обява</a>
+                           <a class="nav-link" @click="deletePost()">Премахване на обява</a>
                         </li>
                      </ul>
                   </div>
@@ -427,9 +436,7 @@
                      <h6>Снимка:</h6>
                   </div>
                   <div class="img-box mt-5" >
-                        {% endverbatim %}
-                        <img src="{% static 'images/p1.png' %}" alt="">
-                        {% verbatim %}
+                        <img :src="user.posts[user.active_post].picture" alt="">
                   </div>
                   <div class="mt-5">
                      <button class="form_button2"> Промени </button>
@@ -447,7 +454,8 @@
                                     <h6>Наименование:</h6>
                                  </li>
                                  <li>
-                                    <input class="form_input2" type="text" value="Мъжка риза" placeholder="Въведете кратко наименование на обявата" >
+                                    <input class="form_input2" type="text" value="Мъжка риза"
+                                           placeholder="Въведете кратко наименование на обявата" v-model="user.posts[user.active_post].title">
                                  </li>
                               </ul>
 
@@ -457,7 +465,8 @@
                                     <h6>Цена:</h6>
                                  </li>
                                  <li>
-                                    <input class="form_input2" type="number" min="1" value="25.00" placeholder="Въведете цена в лева" >
+                                    <input class="form_input2" type="number" min="1" value="25.00"
+                                           placeholder="Въведете цена в лева" v-model="user.posts[user.active_post].price">
                                  </li>
                               </ul>
 
@@ -468,10 +477,8 @@
                                  </li>
                                  <li>
                                     <select class="form_input2" aria-label="Category select" >
-                                       <option selected>Мъжки дрехи</option>
-                                       <option value="1">Дамски дрехи</option>
-                                       <option value="2">Мъжки дрехи</option>
-                                       <option value="3">Детски дрехи</option>
+                                       <option selected>{{user.posts[user.active_post].category.name}}</option>
+                                       <option v-for="(cat, idx) in categories" :value="idx">{{cat.name}}</option>
                                     </select>
                                  </li>
                               </ul>
@@ -482,13 +489,9 @@
                                     <h6>Размер:</h6>
                                  </li>
                                  <li>
-                                    <select class="form_input2" size="4" aria-label="Category select" >
-                                       <option selected>XXL</option>
-                                       <option value="1">S</option>
-                                       <option value="2">M</option>
-                                       <option value="3">L</option>
-                                       <option value="4">XL</option>
-                                       <option value="5">XXL</option>
+                                    <select class="form_input2" aria-label="Category select" >
+                                       <option selected>{{user.posts[user.active_post].size.value}}</option>
+                                       <option v-for="(s, idx) in sizes" :value="idx">{{s.value}}</option>
                                     </select>
                                  </li>
                               </ul>
@@ -500,8 +503,7 @@
                                  </li>
                                  <li>
                                     <textarea class="form_input2" style="border-radius: 10px;" name="message" rows="5"
-                                              placeholder="Въведете Вашето запитване">
-   Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod temp incididunt ut labore et dolore magna aliqua. Quis ipsum suspendisse. Donec condimentum elementum convallis. Nunc sed orci a diam ultrices aliquet interdum quis nulla.
+                                              placeholder="Въведете Вашето запитване" v-model="user.posts[user.active_post].description">
                                     </textarea>
                                  </li>
                               </ul>
@@ -513,8 +515,7 @@
                                  </li>
                                  <li>
                                     <textarea class="form_input2" style="border-radius: 10px;" name="remarks" rows="5"
-                                              placeholder="Въведете Вашето запитване">
-   Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod temp incididunt ut labore et dolore magna aliqua. Quis ipsum suspendisse. Donec condimentum elementum convallis. Nunc sed orci a diam ultrices aliquet interdum quis nulla.
+                                              placeholder="Въведете Вашето запитване" v-model="user.posts[user.active_post].remark">
                                     </textarea>
                                  </li>
                               </ul>
@@ -539,7 +540,7 @@
                   </h3>
                </div>
                <div class="row">
-                  <div class="col-12">
+                  <div class="col-12" v-for="post in user.posts[user.active_post].post">
                      <div class="box" style="background-color: lightgray;">
                               <!-- Име -->
                               <ul class="list-inline">
@@ -547,7 +548,7 @@
                                     <h6>Име:</h6>
                                  </li>
                                  <li class="list-inline-item">
-                                    <p class="text-muted"><strong>Иван Петров</strong></p>
+                                    <p class="text-muted"><strong>{{post.name}}</strong></p>
                                  </li>
                               </ul>
 
@@ -557,7 +558,7 @@
                                     <h6>телефон:</h6>
                                  </li>
                                     <li class="list-inline-item">
-                                       <p class="text-muted"><strong>0899991111</strong></p>
+                                       <p class="text-muted"><strong>{{post.phone}}</strong></p>
                                     </li>
                               </ul>
 
@@ -567,7 +568,7 @@
                                     <h6>е-mail адрес:</h6>
                                  </li>
                                     <li class="list-inline-item">
-                                       <p class="text-muted"><strong>addr@site.com</strong></p>
+                                       <p class="text-muted"><strong>{{post.mail}}</strong></p>
                                     </li>
                               </ul>
 
@@ -577,93 +578,7 @@
                                     <h6>текст:</h6>
                                  </li>
                                     <li class="list-inline-item">
-                                       <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod temp incididunt ut labore et dolore magna aliqua. Quis ipsum suspendisse. Donec condimentum elementum convallis. Nunc sed orci a diam ultrices aliquet interdum quis nulla.</p>
-                                    </li>
-                              </ul>
-                     </div>
-                  </div>
-                  <div class="col-12">
-                     <div class="box" style="background-color: lightgray;">
-                              <!-- Име -->
-                              <ul class="list-inline">
-                                 <li class="list-inline-item">
-                                    <h6>Име:</h6>
-                                 </li>
-                                 <li class="list-inline-item">
-                                    <p class="text-muted"><strong>Иван Петров</strong></p>
-                                 </li>
-                              </ul>
-
-                              <!-- телефон -->
-                              <ul class="list-inline">
-                                 <li class="list-inline-item">
-                                    <h6>телефон:</h6>
-                                 </li>
-                                    <li class="list-inline-item">
-                                       <p class="text-muted"><strong>0899991111</strong></p>
-                                    </li>
-                              </ul>
-
-                              <!-- е-mail адрес -->
-                              <ul class="list-inline">
-                                 <li class="list-inline-item">
-                                    <h6>е-mail адрес:</h6>
-                                 </li>
-                                    <li class="list-inline-item">
-                                       <p class="text-muted"><strong>addr@site.com</strong></p>
-                                    </li>
-                              </ul>
-
-                              <!-- Описание -->
-                              <ul class="list-inline">
-                                 <li class="list-inline-item">
-                                    <h6>текст:</h6>
-                                 </li>
-                                    <li class="list-inline-item">
-                                       <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod temp incididunt ut labore et dolore magna aliqua. Quis ipsum suspendisse. Donec condimentum elementum convallis. Nunc sed orci a diam ultrices aliquet interdum quis nulla.</p>
-                                    </li>
-                              </ul>
-                     </div>
-                  </div>
-                  <div class="col-12">
-                     <div class="box" style="background-color: lightgray;">
-                              <!-- Име -->
-                              <ul class="list-inline">
-                                 <li class="list-inline-item">
-                                    <h6>Име:</h6>
-                                 </li>
-                                 <li class="list-inline-item">
-                                    <p class="text-muted"><strong>Иван Петров</strong></p>
-                                 </li>
-                              </ul>
-
-                              <!-- телефон -->
-                              <ul class="list-inline">
-                                 <li class="list-inline-item">
-                                    <h6>телефон:</h6>
-                                 </li>
-                                    <li class="list-inline-item">
-                                       <p class="text-muted"><strong>0899991111</strong></p>
-                                    </li>
-                              </ul>
-
-                              <!-- е-mail адрес -->
-                              <ul class="list-inline">
-                                 <li class="list-inline-item">
-                                    <h6>е-mail адрес:</h6>
-                                 </li>
-                                    <li class="list-inline-item">
-                                       <p class="text-muted"><strong>addr@site.com</strong></p>
-                                    </li>
-                              </ul>
-
-                              <!-- Описание -->
-                              <ul class="list-inline">
-                                 <li class="list-inline-item">
-                                    <h6>текст:</h6>
-                                 </li>
-                                    <li class="list-inline-item">
-                                       <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod temp incididunt ut labore et dolore magna aliqua. Quis ipsum suspendisse. Donec condimentum elementum convallis. Nunc sed orci a diam ultrices aliquet interdum quis nulla.</p>
+                                       <p class="text-muted">{{post.message}}</p>
                                     </li>
                               </ul>
                      </div>

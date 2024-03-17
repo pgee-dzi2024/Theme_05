@@ -2,8 +2,8 @@ from django.db import models
 
 # Потребители
 class AppUserManager(models.Manager):
-    def create_user(self, user_id):
-        item = self.create(user=user_id)
+    def create_user(self, name, mail, username, password):
+        item = self.create(name=name, mail=mail, username=username, password=password)
         return item
 
 
@@ -59,11 +59,12 @@ class UserPostManager(models.Manager):
 class UserPost(models.Model):
     title = models.CharField('Наименование', max_length=50, default='', blank=True, help_text='Наименование на артикула за продажба')
     price = models.DecimalField('Цена', max_digits=6, decimal_places=2, help_text='Цена на артикула')
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True, related_name='cat')
-    size = models.ForeignKey(Size, on_delete=models.CASCADE, null=True, related_name='size')
+    category = models.ForeignKey(Category, verbose_name='Категория', on_delete=models.CASCADE, null=True, related_name='cat')
+    size = models.ForeignKey(Size,  verbose_name='Размер', on_delete=models.CASCADE, null=True, related_name='size')
     description = models.TextField('Описание', default='', blank=True, help_text='Описание на предлагания продукт')
     remark = models.TextField('Забележки', default='', blank=True, help_text='Текст на съобщение')
     picture = models.ImageField('Снимка', upload_to='post_pics', blank=True)
+    user = models.ForeignKey(AppUser,  verbose_name='Потребител', on_delete=models.CASCADE, null=True, related_name='usr')
 
     objects = UserPostManager()
 
@@ -77,13 +78,17 @@ class UserPost(models.Model):
 
 # Коментари към обява
 class CommentManager(models.Manager):
-    def create_comment(self, comment_id):
-        item = self.create(cm=comment_id)
+    def create_comment(self, values):
+        item = self.create(post_id=values['post_id'],
+                           name=values['name'],
+                           mail=values['mail'],
+                           phone=values['phone'],
+                           message=values['message'],)
         return item
 
 
 class Comment(models.Model):
-    post_id = models.ForeignKey(UserPost, on_delete=models.CASCADE, null=True, related_name='post')
+    post_id = models.ForeignKey(UserPost, verbose_name='Обява', on_delete=models.CASCADE, null=True, related_name='post')
     name = models.CharField('Име, Фамилия', max_length=50, default='', blank=True, help_text='Име и фамилия на подателя')
     mail = models.CharField('e-mail', max_length=30, default='', blank=True, help_text='Адрес на електронна поща за контакт')
     phone = models.CharField('телефонeн номер', max_length=30, default='', blank=True, help_text='Телефонен номер за контакт')

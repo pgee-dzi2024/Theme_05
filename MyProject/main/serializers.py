@@ -17,12 +17,20 @@ class SizesSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-# Сериализатор  КОМЕНТАРИ
+# Сериализаторi  КОМЕНТАРИ
 class CommentsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = "__all__"
 
+
+class CommentsByUserSerializer(serializers.ModelSerializer):
+    post = CommentsSerializer(many=True)
+
+    class Meta:
+        model = UserPost
+        fields = '__all__'
+        depth = 1
 
 # Сериализатор  ОБЯВИ
 class PostsSerializer(serializers.ModelSerializer):
@@ -30,3 +38,10 @@ class PostsSerializer(serializers.ModelSerializer):
         model = UserPost
         fields = "__all__"
         depth = 1
+
+
+# Сериализатор  ПОТРЕБИТЕЛИ
+class UsersSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AppUser
+        fields = "__all__"
