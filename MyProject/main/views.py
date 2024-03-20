@@ -93,3 +93,37 @@ class PostDeleteAPIView(APIView):
         UserPost.objects.filter(id=idx).delete()
         return Response(status=201)
 
+
+# Обява - запис
+# Обява - създаване на нова
+class PostNewAPIView(APIView):
+    def post(self, request):
+        cat_id = Category.objects.filter(id=request.data['category']).get()
+        size_id = Size.objects.filter(id=request.data['size']).get()
+        user_id = AppUser.objects.filter(id=request.data['user']).get()
+        task = UserPost.objects.create_post(cat_id, size_id, user_id)
+        task.save()
+        return Response(task.id)
+
+
+# Обява - запис на тялото
+class PostSaveAPIView(APIView):
+    def post(self, request):
+        print(request.data)
+        data = PostSaveSerializer(data=request.data)
+        if data.is_valid():
+            data.save()
+        else:
+            print('error validation: ', data.errors)
+        return Response(status=201)
+
+
+# Обява - запис на картинката
+class PostPictureSaveAPIView(APIView):
+    def post(self, request):
+        print(request.data)
+        data = PostFileSerializer(data=request.data)
+        if data.is_valid():
+            data.save(id=request.data['id'])
+        return Response(status=201)
+

@@ -1,6 +1,7 @@
 from django.db import models
 
 # Потребители
+
 class AppUserManager(models.Manager):
     def create_user(self, name, mail, username, password):
         item = self.create(name=name, mail=mail, username=username, password=password)
@@ -51,20 +52,23 @@ class Size(models.Model):
 
 # Обява
 class UserPostManager(models.Manager):
-    def create_post(self, post_id):
-        item = self.create(user_post=post_id)
+    def create_post(self, cat_id, size_id, user_id):
+        item = self.create(category=cat_id, size=size_id, user=user_id)
         return item
 
 
 class UserPost(models.Model):
-    title = models.CharField('Наименование', max_length=50, default='', blank=True, help_text='Наименование на артикула за продажба')
-    price = models.DecimalField('Цена', max_digits=6, decimal_places=2, help_text='Цена на артикула')
-    category = models.ForeignKey(Category, verbose_name='Категория', on_delete=models.CASCADE, null=True, related_name='cat')
+    title = models.CharField('Наименование', max_length=50, default='', blank=True,
+                             help_text='Наименование на артикула за продажба')
+    price = models.DecimalField('Цена', max_digits=6, decimal_places=2, default=0, help_text='Цена на артикула')
+    category = models.ForeignKey(Category, verbose_name='Категория', on_delete=models.CASCADE, null=True,
+                                 related_name='cat')
     size = models.ForeignKey(Size,  verbose_name='Размер', on_delete=models.CASCADE, null=True, related_name='size')
     description = models.TextField('Описание', default='', blank=True, help_text='Описание на предлагания продукт')
     remark = models.TextField('Забележки', default='', blank=True, help_text='Текст на съобщение')
     picture = models.ImageField('Снимка', upload_to='post_pics', blank=True)
-    user = models.ForeignKey(AppUser,  verbose_name='Потребител', on_delete=models.CASCADE, null=True, related_name='usr')
+    user = models.ForeignKey(AppUser,  verbose_name='Потребител', on_delete=models.CASCADE, null=True,
+                             related_name='usr')
 
     objects = UserPostManager()
 
@@ -88,10 +92,14 @@ class CommentManager(models.Manager):
 
 
 class Comment(models.Model):
-    post_id = models.ForeignKey(UserPost, verbose_name='Обява', on_delete=models.CASCADE, null=True, related_name='post')
-    name = models.CharField('Име, Фамилия', max_length=50, default='', blank=True, help_text='Име и фамилия на подателя')
-    mail = models.CharField('e-mail', max_length=30, default='', blank=True, help_text='Адрес на електронна поща за контакт')
-    phone = models.CharField('телефонeн номер', max_length=30, default='', blank=True, help_text='Телефонен номер за контакт')
+    post_id = models.ForeignKey(UserPost, verbose_name='Обява', on_delete=models.CASCADE,
+                                null=True, related_name='post')
+    name = models.CharField('Име, Фамилия', max_length=50, default='', blank=True,
+                            help_text='Име и фамилия на подателя')
+    mail = models.CharField('e-mail', max_length=30, default='', blank=True,
+                            help_text='Адрес на електронна поща за контакт')
+    phone = models.CharField('телефонeн номер', max_length=25, default='', blank=True,
+                             help_text='Телефонен номер за контакт')
     message = models.TextField('Съобщение', default='', blank=True, help_text='Съобщение/заитване')
 
     objects = CommentManager()

@@ -415,7 +415,7 @@
                            <a class="nav-link" @click="changeActivePost(1)">Следваща обява</a>
                         </li>
                         <li class="nav-item">
-                           <a class="nav-link" href="index.html">Нова обява</a>
+                           <a class="nav-link" @click="addPost()">Нова обява</a>
                         </li>
                         <li class="nav-item">
                            <a class="nav-link" @click="deletePost()">Премахване на обява</a>
@@ -439,7 +439,15 @@
                         <img :src="user.posts[user.active_post].picture" alt="">
                   </div>
                   <div class="mt-5">
-                     <button class="form_button2"> Промени </button>
+                     <ul class="list-unstyled">
+                        <li>
+                           <h6>Графичен файл (.png; .jpg; .bmp):</h6>
+                        </li>
+                        <li>
+                           <input class="form-control-file form_input2" type="file" @change="onImageChange($event)"
+                                  style="padding-top: 15px;">
+                        </li>
+                     </ul>
                   </div>
                </div>
 
@@ -447,7 +455,7 @@
                <div class="col-sm-6 col-md-6 col-lg-6">
                     <div class="card">
                         <div class="card-body">
-                           <form>
+                           <div>
                               <!-- Наименование -->
                               <ul class="list-unstyled">
                                  <li>
@@ -465,7 +473,7 @@
                                     <h6>Цена:</h6>
                                  </li>
                                  <li>
-                                    <input class="form_input2" type="number" min="1" value="25.00"
+                                    <input class="form_input2" type="number" min="0" step="0.01" value="25.00"
                                            placeholder="Въведете цена в лева" v-model="user.posts[user.active_post].price">
                                  </li>
                               </ul>
@@ -476,9 +484,10 @@
                                     <h6>Категория:</h6>
                                  </li>
                                  <li>
-                                    <select class="form_input2" aria-label="Category select" >
-                                       <option selected>{{user.posts[user.active_post].category.name}}</option>
-                                       <option v-for="(cat, idx) in categories" :value="idx">{{cat.name}}</option>
+                                    <select class="form_input2" aria-label="Category select"
+                                            v-model="user.posts[user.active_post].category">
+                                       <option selected>{{ category_name() }}</option>
+                                       <option v-for="(cat, idx) in categories" :value="cat.id">{{cat.name}}</option>
                                     </select>
                                  </li>
                               </ul>
@@ -489,9 +498,10 @@
                                     <h6>Размер:</h6>
                                  </li>
                                  <li>
-                                    <select class="form_input2" aria-label="Category select" >
-                                       <option selected>{{user.posts[user.active_post].size.value}}</option>
-                                       <option v-for="(s, idx) in sizes" :value="idx">{{s.value}}</option>
+                                    <select class="form_input2" aria-label="Category select"
+                                            v-model="user.posts[user.active_post].size">
+                                       <option selected>{{ size_name() }}</option>
+                                       <option v-for="(s, idx) in sizes" :value="s.id">{{s.value}}</option>
                                     </select>
                                  </li>
                               </ul>
@@ -503,7 +513,7 @@
                                  </li>
                                  <li>
                                     <textarea class="form_input2" style="border-radius: 10px;" name="message" rows="5"
-                                              placeholder="Въведете Вашето запитване" v-model="user.posts[user.active_post].description">
+                                              placeholder="Въведете описание на артикула" v-model="user.posts[user.active_post].description">
                                     </textarea>
                                  </li>
                               </ul>
@@ -515,15 +525,15 @@
                                  </li>
                                  <li>
                                     <textarea class="form_input2" style="border-radius: 10px;" name="remarks" rows="5"
-                                              placeholder="Въведете Вашето запитване" v-model="user.posts[user.active_post].remark">
+                                              placeholder="Опишете забележките, ако има такива" v-model="user.posts[user.active_post].remark">
                                     </textarea>
                                  </li>
                               </ul>
 
                               <div style="text-align: center;">
-                                 <button class="form_button"> Запиши </button>
+                                 <button class="form_button" @click="savePostData()"> Запиши </button>
                               </div>
-                           </form>
+                           </div>
                         </div>
                     </div>
                </div>

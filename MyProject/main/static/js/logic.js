@@ -15,6 +15,8 @@ const App = {
             id: 0,
             active_post: 0,
             posts: [],
+            file: {},
+            new_image: 0,
             },
         new_user: {
             name: '',
@@ -49,8 +51,10 @@ const App = {
                 this.new_comment.phone = ''
                 this.new_comment.message = ''
                 }
-            if (SectionName=='проверка')
-                {this.status=4}
+            if (SectionName=='проверка'){
+                this.status=4
+                this.user.new_image=0
+                }
         },
         loadCategories(){
             vm = this
@@ -107,6 +111,7 @@ const App = {
             axios.get(ax)
             .then(function(response){
                 vm.user.posts = response.data;
+                vm.user.new_image=0
                 })
         },
         set_filter(cat){
@@ -223,8 +228,118 @@ const App = {
             this.user.active_post += direction
             if(this.user.active_post<0){this.user.active_post=0}
             if(this.user.active_post>=this.user.posts.length){this.user.active_post=this.user.posts.length-1}
+            this.user.new_image=0
             },
+        onImageChange(e){
+            this.user.file = e.target.files[0]
+            this.user.posts[this.user.active_post].picture = URL.createObjectURL(this.user.file)
+            console.log('File ', this.user.file)
+            this.user.new_image=1
         },
+        addPost(){
+            this.user.posts.active_post=this.user.posts.length
+            this.user.posts[this.user.active_post]=
+                {"id": 0,
+                 "post": [],
+                 "title": "",
+                 "price": "0.00",
+                 "description": "",
+                 "remark": "",
+                 "picture": "",
+                 "category": this.categories[0].id,
+                 "size": this.sizes[0].id,
+                 "user": this.user.id,
+                 }
+            this.user.new_image=0
+        },
+        savePostData(){
+            function save_picture(obj, post){
+                let formData = new FormData();
+                formData.append('id', obj.id)
+                formData.append('picture', obj.file)
+                let url = '/api/save_picture/'
+                axios.post(url, formData, {headers: {'X-CSRFToken':CSRF_TOKEN, 'Content-Type': 'multipart/form-data'}})
+                obj.user.new_image=0
+            }
+            function save_post(obj, post){
+                const d ={
+                        id: post.id,
+                        ids: post.id,
+                        title: post.title,
+                        price: post.price,
+                        category: post.category,
+                        size: post.size,
+                        description: post.description,
+                        remark: post.remark,
+                        remark: post.remark,
+                        user: post.user,
+                    }
+                console.log('d: ',d)
+                axios({
+                    method:'POST',
+                    url:'/api/save_post/',
+                    headers:{
+                        'X-CSRFToken':CSRF_TOKEN,
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                    data: d
+                })
+                .then(response => {
+                    console.log('obj.user.new_image: ',obj.user.new_image)
+                    if (obj.user.new_image>0){save_picture(obj, post) }
+                })
+            }
+            function create_post(obj, post){
+                console.log('new post-->', ' category: ', post.category, ', size: ', post.size, ', user: ', post.user)
+                axios({
+                    method:'POST',
+                    url:'/api/new_post/',
+                    headers:{
+                        'X-CSRFToken':CSRF_TOKEN,
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                    data:{
+                        category: post.category,
+                        size: post.size,
+                        user: post.user,
+                    }
+                })
+                .then(response => {
+                    const id=response.data
+                    console.log('new id before =', obj.user.posts[obj.user.active_post].id)
+                    obj.user.posts[obj.user.active_post].id = id
+                    console.log('new id after =', obj.user.posts[obj.user.active_post].id)
+                    post.id = id
+                    console.log('new id in post =', post.id)
+                    save_post(obj,post)
+                })
+            }
+            let p=this.user.posts[this.user.active_post]
+            const vm=this
+            if(p.id==0){
+                save_post(vm, p)
+            }
+            else{
+                save_post(vm, p)
+            }
+        },
+        category_name(){
+            for (i=0; i<this.categories.length; i++){
+                if (this.categories[i].id==this.user.posts[this.user.active_post].category){
+                    return this.categories[i].name
+                }
+            }
+        },
+        size_name(){
+            for (i=0; i<this.sizes.length; i++){
+                if (this.sizes[i].id==this.user.posts[this.user.active_post].size){
+                    return this.sizes[i].value
+                }
+            }
+        },
+       },
     created: function(){
         this.status = 0
         this.loadCategories()
