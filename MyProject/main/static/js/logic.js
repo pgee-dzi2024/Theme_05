@@ -45,6 +45,7 @@ const App = {
                 {this.status=2}
             if (SectionName=='обява'){
                 this.status=3
+                console.log('status=', this.status)
                 this.new_comment.post_id = this.current_post.id
                 this.new_comment.name = ''
                 this.new_comment.mail = ''
@@ -127,7 +128,9 @@ const App = {
             console.log("max_posts_mode=",this.max_posts_mode)
         },
         show_post_details(num){
+            console.log('num=',num)
             this.current_post = this.posts[num]
+            console.log('current_post=',this.current_post)
             this.setSection('обява')
         },
         login(){
